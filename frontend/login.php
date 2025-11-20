@@ -56,7 +56,7 @@
         <span class="text-xl font-bold"><a href="index.html" class="hover:text-red-200">Pinoys Cravings</a></span>
       </div>
       <div class="hidden md:flex space-x-6 gap-20">
-        <a href="index.html" class="hover:text-red-200">Home</a>
+        <a href="index.php" class="hover:text-red-200">Home</a>
         <a href="categories.html" class="hover:text-red-200">Categories</a>
         <a href="#" class="hover:text-red-200">Favorites</a>
         <a href="#" class="hover:text-red-200">Collections</a>

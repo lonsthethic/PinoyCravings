@@ -52,10 +52,10 @@
                 <span class="font-bold text-xl">PinoysCravings</span>
             </a>
             <div class="hidden md:flex space-x-6">
-                <a href="index.html" class="hover:text-gray-200">Home</a>
-                <a href="categories.html" class="hover:text-gray-200">Categories</a>
-                <a href="favorites.html" class="hover:text-gray-200">Favorites</a>
-                <a href="collections.html" class="hover:text-gray-200">Collections</a>
+                <a href="index.php" class="hover:text-gray-200">Home</a>
+                <a href="categories.php" class="hover:text-gray-200">Categories</a>
+                <a href="favorites.php" class="hover:text-gray-200">Favorites</a>
+                <a href="collections.php" class="hover:text-gray-200">Collections</a>
             </div>
             <div class="flex items-center space-x-4">
                 <div class="relative">

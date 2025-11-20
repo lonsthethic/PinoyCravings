@@ -38,16 +38,16 @@
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <i data-feather="clock" class="w-6 h-6"></i>
-        <span class="text-xl font-bold"><a href="index.html" class="hover:text-red-200">Pinoys Cravings</a></span>
+        <span class="text-xl font-bold"><a href="index.php" class="hover:text-red-200">Pinoys Cravings</a></span>
       </div>
       <div class="hidden md:flex space-x-6 gap-20 font-medium">
-        <a href="index.html" class="hover:text-red-200">Home</a>
-        <a href="categories.html" class="hover:text-red-200">Categories</a>
-        <a href="Favorites.html" class="hover:text-red-200">Favorites</a>
-        <a href="collection.html" class="hover:text-red-200">Collections</a>
+        <a href="index.php" class="hover:text-red-200">Home</a>
+        <a href="categories.php" class="hover:text-red-200">Categories</a>
+        <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
+        <a href="collection.php" class="hover:text-red-200">Collections</a>
       </div>
       <div class="flex items-center space-x-4">
-        <a href="login.html" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500 font-medium">Login</a>
+        <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500 font-medium">Login</a>
       </div>
     </div>
   </nav>
@@ -58,10 +58,18 @@
       <h1 class="text-4xl md:text-5xl font-bold mb-4">Discover Authentic Filipino Recipes</h1>
       <p class="text-xl mb-8 max-w-2xl mx-auto text-red-100">From classic adobo to sweet halo-halo, explore the rich flavors of Philippine cuisine</p>
       <div class="relative max-w-xl mx-auto">
-        <input type="text" placeholder="Search for recipes..." class="w-full px-6 py-4 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-400">
+        
+        <form action="results.php" method="post">
+          <input type="text" name="user_search" placeholder="Search for recipes..." class="w-full px-6 py-4 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-400">
+
+         
         <button class="absolute right-2 top-2 bg-red-600 text-white p-2 rounded-full hover:bg-red-700">
           <i data-feather="search" class="w-5 h-5"></i>
         </button>
+
+
+        </form>
+        
       </div>
     </div>
   </section>
@@ -72,23 +80,23 @@
       <h2 class="text-3xl font-bold mb-8 text-center text-red-700">Recipe Categories</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-10 justify-center">
         <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <div class="h-40 bg-cover bg-center" style="background-image: url('http://static.photos/food/640x360/1');"></div>
+          <div class="h-40 bg-cover bg-center" style="background-image: url('https://www.unileverfoodsolutions.com.ph/chef-inspiration/food-delivery/10-crowd-favorite-filipino-dishes/jcr:content/parsys/set1/row2/span12/columncontrol_copy/columnctrl_parsys_2/textimage_copy/image.transform/jpeg-optimized/image.1697454873707.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Main Dishes</h3>
             <p class="text-gray-600 text-sm">24 recipes</p>
           </div>
         </a>
         <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <div class="h-40 bg-cover bg-center" style="background-image: url('http://static.photos/food/640x360/2');"></div>
+          <div class="h-40 bg-cover bg-center" style="background-image: url('https://images.yummy.ph/yummy/uploads/2022/12/Eden-Yummy-Image-Insert-Cheesy-Leche-Flan.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Desserts</h3>
             <p class="text-gray-600 text-sm">18 recipes</p>
           </div>
         </a>
         <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <div class="h-40 bg-cover bg-center" style="background-image: url('http://static.photos/food/640x360/3');"></div>
+          <div class="h-40 bg-cover bg-center" style="background-image: url('https://cdn.tatlerasia.com/asiatatler/i/ph/2021/05/07105034-gettyimages-1257260385_cover_1280x764.jpg');"></div>
           <div class="p-4">
-            <h3 class="font-semibold text-lg">Street Food</h3>
+            <h3 class="font-semibold text-lg">Breakfast</h3>
             <p class="text-gray-600 text-sm">15 recipes</p>
           </div>
         </a>
@@ -170,14 +178,14 @@
         </div>
         <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="200">
           <div class="relative">
-            <img src="http://static.photos/food/640x360/5" alt="Adobo" class="w-full h-48 object-cover">
+            <img src="https://www.nestlegoodnes.com/ph/sites/default/files/styles/1_1_768px_width/public/srh_recipes/41d16b3eb7ce08aba9e9114f304f5d87.jpg.webp?itok=IzwghKEf" alt="Adobo" class="w-full h-48 object-cover">
             <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
               <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
             </div>
           </div>
           <div class="p-4">
             <div class="flex justify-between items-start mb-2">
-              <h3 class="font-bold text-xl">Chicken Adobo</h3>
+              <h3 class="font-bold text-xl">Pork Adobo</h3>
               <div class="flex items-center">
                 <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
               </div>
