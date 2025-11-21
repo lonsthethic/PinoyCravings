@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE php>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -46,16 +46,16 @@
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <i data-feather="clock" class="w-6 h-6"></i>
-        <span class="text-xl font-bold"><a href="index.html" class="hover:text-red-200">Pinoys Cravings</a></span>
+        <span class="text-xl font-bold"><a href="index.php" class="hover:text-red-200">Pinoys Cravings</a></span>
       </div>
       <div class="hidden md:flex space-x-6 gap-20">
-        <a href="index.html" class="hover:text-red-200">Home</a>
-        <a href="categories.html" class="hover:text-red-200">Categories</a>
+        <a href="index.php" class="hover:text-red-200">Home</a>
+        <a href="categories.php" class="hover:text-red-200">Categories</a>
         <a href="#" class="hover:text-red-200">Favorites</a>
         <a href="#" class="hover:text-red-200">Collections</a>
       </div>
       <div class="flex items-center space-x-4">
-        <a href="login.html" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>
+        <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>
       </div>
     </div>
   </nav>
@@ -123,7 +123,7 @@
 
                 <div class="text-center">
                     <p class="text-gray-600">Already have an account? 
-                        <a href="login.html" class="text-primary hover:underline">Log in</a>
+                        <a href="login.php" class="text-primary hover:underline">Log in</a>
                     </p>
                 </div>
             </form>
@@ -149,18 +149,18 @@
                 <div>
                     <h4 class="font-bold text-lg mb-4">Quick Links</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
-                        <li><a href="categories.html" class="text-gray-400 hover:text-white">Categories</a></li>
-                        <li><a href="favorites.html" class="text-gray-400 hover:text-white">Favorites</a></li>
-                        <li><a href="collections.html" class="text-gray-400 hover:text-white">Collections</a></li>
+                        <li><a href="index.php" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="categories.php" class="text-gray-400 hover:text-white">Categories</a></li>
+                        <li><a href="favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
+                        <li><a href="collections.php" class="text-gray-400 hover:text-white">Collections</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-lg mb-4">Categories</h4>
                     <ul class="space-y-2">
-                        <li><a href="categories.html#main-dishes" class="text-gray-400 hover:text-white">Main Dishes</a></li>
-                        <li><a href="categories.html#desserts" class="text-gray-400 hover:text-white">Desserts</a></li>
-                        <li><a href="categories.html#street-food" class="text-gray-400 hover:text-white">Street Food</a></li>
+                        <li><a href="categories.php#main-dishes" class="text-gray-400 hover:text-white">Main Dishes</a></li>
+                        <li><a href="categories.php#desserts" class="text-gray-400 hover:text-white">Desserts</a></li>
+                        <li><a href="categories.php#street-food" class="text-gray-400 hover:text-white">Street Food</a></li>
                     </ul>
                 </div>
                 <div>
