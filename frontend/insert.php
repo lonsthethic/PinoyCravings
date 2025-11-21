@@ -7,7 +7,7 @@
 </head>
 <body>
     
-    <form action="insert_recipe.php" method="post" enctype="multipart/form-date">
+    <form action="insert.php" method="post" enctype="multipart/form-date">
         <table>
             <tr>
                 <td><h2>Inserting new recipe</h2></td>
@@ -34,10 +34,18 @@
 </html>
 
 <?php
-    include "./backend/connection.php";
-    mysqli_select_db($con, "recipe");
-    if(isset($POST['submit'])){
-        echo $recipe_name = $_POST['New_recipe'];
-        echo $recipe_category = $_POST['New_category'];
+    include "../backend/connection.php";
+    
+    if(isset($_POST['submit'])){
+         $recipe_name = $_POST['New_recipe'];
+         $recipe_category = $_POST['New_category'];
+
+         $insert_query = "INSERT INTO recipes(recipeName, recipeCategory) VALUES('$recipe_name', '$recipe_category')";
+            if(mysqli_query($conn,$insert_query)){
+                 echo"<script>alert('Data Inserted')</script>";
+    }else{
+        
     }
+    }
+    
 ?>
