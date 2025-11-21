@@ -34,13 +34,10 @@
 </html>
 
 <?php
-    mysql_connect("localhost", "root","@admin1230997");
-    mysql_select_db("recipes");
-
+    include "./backend/connection.php";
+    mysqli_select_db($con, "recipe");
     if(isset($POST['submit'])){
         echo $recipe_name = $_POST['New_recipe'];
         echo $recipe_category = $_POST['New_category'];
     }
-
-
 ?>
