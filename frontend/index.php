@@ -172,7 +172,7 @@
                 <input type="radio" id="1-star-2" name="rating-2" value="1" />
                 <label for="1-star-2">★</label>
               </div>
-              <a href="recipe.html" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
+              <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
             </div>
           </div>
         </div>
@@ -204,14 +204,14 @@
                 <input type="radio" id="1-star-3" name="rating-3" value="1" />
                 <label for="1-star-3">★</label>
               </div>
-              <a href="recipe.html" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
+              <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
             </div>
           </div>
         </div>
 
       </div>
       <div class="text-center mt-8">
-        <a href="recipes.html" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700">View All Recipes</a>
+        <a href="recipes.php" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700">View All Recipes</a>
       </div>
     </div>
   </section>

@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE php>
+<php lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,22 +34,22 @@
     <!-- Navigation -->
     <nav class="bg-primary text-white shadow-lg">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-2">
+            <a href="index.php" class="flex items-center space-x-2">
                 <i data-feather="heart" class="text-white"></i>
                 <span class="font-bold text-xl">PinoysCravings</span>
             </a>
             <div class="hidden md:flex space-x-6">
-                <a href="index.html" class="hover:text-gray-200">Home</a>
-                <a href="categories.html" class="hover:text-gray-200">Categories</a>
-                <a href="favorites.html" class="hover:text-gray-200">Favorites</a>
-                <a href="collections.html" class="hover:text-gray-200 font-medium">Collections</a>
+                <a href="index.php" class="hover:text-gray-200">Home</a>
+                <a href="categories.php" class="hover:text-gray-200">Categories</a>
+                <a href="favorites.php" class="hover:text-gray-200">Favorites</a>
+                <a href="collections.php" class="hover:text-gray-200 font-medium">Collections</a>
             </div>
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <input type="text" placeholder="Search recipes..." class="px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
                     <i data-feather="search" class="absolute right-3 top-2.5 text-gray-500"></i>
                 </div>
-                <button onclick="location.href='login.html'" class="bg-white text-primary px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition duration-300">Login</button>
+                <button onclick="location.href='login.php'" class="bg-white text-primary px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition duration-300">Login</button>
                 <button class="md:hidden" id="mobile-menu-button">
                     <i data-feather="menu"></i>
                 </button>
@@ -57,10 +57,10 @@
         </div>
         <!-- Mobile menu -->
         <div class="md:hidden hidden bg-primary-dark px-4 py-2" id="mobile-menu">
-            <a href="index.html" class="block py-2 hover:text-gray-200">Home</a>
-            <a href="categories.html" class="block py-2 hover:text-gray-200">Categories</a>
-            <a href="favorites.html" class="block py-2 hover:text-gray-200">Favorites</a>
-            <a href="collections.html" class="block py-2 hover:text-gray-200 font-medium">Collections</a>
+            <a href="index.php" class="block py-2 hover:text-gray-200">Home</a>
+            <a href="categories.php" class="block py-2 hover:text-gray-200">Categories</a>
+            <a href="favorites.php" class="block py-2 hover:text-gray-200">Favorites</a>
+            <a href="collections.php" class="block py-2 hover:text-gray-200 font-medium">Collections</a>
         </div>
     </nav>
 
@@ -82,7 +82,7 @@
             <i data-feather="lock" class="w-16 h-16 mx-auto text-gray-400 mb-4"></i>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">Login to View Collections</h2>
             <p class="text-gray-600 mb-6">Sign in to access your recipe collections and create new ones.</p>
-            <button onclick="location.href='login.html'" class="bg-primary hover:bg-red-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">Sign In</button>
+            <button onclick="location.href='login.php'" class="bg-primary hover:bg-red-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">Sign In</button>
         </div>
 
         <!-- Sample Content (hidden when logged out) -->
@@ -212,18 +212,18 @@
                 <div>
                     <h4 class="font-bold text-lg mb-4">Quick Links</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
-                        <li><a href="categories.html" class="text-gray-400 hover:text-white">Categories</a></li>
-                        <li><a href="favorites.html" class="text-gray-400 hover:text-white">Favorites</a></li>
-                        <li><a href="collections.html" class="text-gray-400 hover:text-white font-medium">Collections</a></li>
+                        <li><a href="index.php" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="categories.php" class="text-gray-400 hover:text-white">Categories</a></li>
+                        <li><a href="favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
+                        <li><a href="collections.php" class="text-gray-400 hover:text-white font-medium">Collections</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-lg mb-4">Categories</h4>
                     <ul class="space-y-2">
-                        <li><a href="categories.html#main-dishes" class="text-gray-400 hover:text-white">Main Dishes</a></li>
-                        <li><a href="categories.html#desserts" class="text-gray-400 hover:text-white">Desserts</a></li>
-                        <li><a href="categories.html#street-food" class="text-gray-400 hover:text-white">Street Food</a></li>
+                        <li><a href="categories.php#main-dishes" class="text-gray-400 hover:text-white">Main Dishes</a></li>
+                        <li><a href="categories.php#desserts" class="text-gray-400 hover:text-white">Desserts</a></li>
+                        <li><a href="categories.php#street-food" class="text-gray-400 hover:text-white">Street Food</a></li>
                     </ul>
                 </div>
                 <div>
@@ -254,4 +254,4 @@
         feather.replace();
     </script>
 </body>
-</html>
+</php>
