@@ -61,8 +61,10 @@
   </nav>
 
     <!-- Login Form -->
-   <section class="py-16 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden login-container">
+        
+            <form action="reg.php" method="post" class="py-16 px-4 sm:px-6 lg:px-8">
+
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden login-container">
         <div class="bg-primary text-white p-6">
             <h2 class="text-2xl font-bold">Welcome to PinoysCravings!</h2>
             <p class="text-gray-200">Create an account to get started</p>
@@ -87,9 +89,9 @@
                     <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
                     <div class="relative">
                         <i data-feather="mail" class="absolute left-3 top-3 text-gray-400"></i>
-                        <input type="email" id="Email" 
+                        <input type="email" name = "insertemail"
                             class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
-                            placeholder="your@email.com" required>
+                            placeholder="your@email.com" required >
                     </div>
                 </div>
 
@@ -98,13 +100,13 @@
                     <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
                     <div class="relative">
                         <i data-feather="lock" class="absolute left-3 top-3 text-gray-400"></i>
-                        <input type="password" id="Password" 
+                        <input type="password" name = "insertpassword"
                             class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
-                            placeholder="••••••••" required>
+                            placeholder="••••••••" required >
                     </div>
                 </div>
 
-                <!-- ROLE -->
+                <!-- ROLE
                 <div class="mb-6">
                     <label for="role" class="block text-gray-700 font-medium mb-2">Select Role</label>
                     <select id="role" name="role" required
@@ -113,13 +115,14 @@
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </select>
-                </div>
+                </div> -->
 
                 <!-- BUTTON -->
-                <button id = "submit" type="submit" 
+                <!-- <button id = "submit" type="submit" name ="submit"
                         class="w-full bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 mb-4">
                     Register
-                </button>
+                </button> -->
+                <input type="submit" name = "submit" class="w-full bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 mb-4">
 
                 <div class="text-center">
                     <p class="text-gray-600">Already have an account? 
@@ -129,7 +132,13 @@
             </form>
         </div>
     </div>
-</section>
+
+
+            </form>
+
+
+        
+        
 
 
     <!-- Footer -->
@@ -205,3 +214,19 @@ select{
 
 
 </html>
+ <?php
+        include "../backend/connection.php";
+        if(isset($_POST['submit'])){
+          echo  $email = $_POST['insertemail'];
+          echo  $pass = $_POST['insertpassword'];
+
+            $insert_acc = "INSERT INTO accounts(Email, Passwords) VALUES('$email','$pass')";
+
+            if(mysqli_query($conn,$insert_acc)){
+                 echo"<script>alert('Data Inserted')</script>"; } else{
+                    
+                 }
+        }
+
+
+?> 

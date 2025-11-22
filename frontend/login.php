@@ -68,8 +68,8 @@
   </nav>
 
     <!-- Login Form -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden login-container">
+        <form action="login.php" method="post" class="py-16 px-4 sm:px-6 lg:px-8"id="loginform">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden login-container">
             <div class="bg-primary text-white p-6">
                 <h2 class="text-2xl font-bold">Welcome to PinoysCravings!</h2>
                 <p class="text-gray-200">Sign in to access your favorite recipes and collections</p>
@@ -80,14 +80,14 @@
                         <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
                         <div class="relative">
                             <i data-feather="mail" class="absolute left-3 top-3 text-gray-400"></i>
-                            <input type="email" id="email" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="your@email.com">
+                            <input type="email" name="emailLog" id="email" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="your@email.com">
                         </div>
                     </div>
                     <div class="mb-6">
                         <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
                         <div class="relative">
                             <i data-feather="lock" class="absolute left-3 top-3 text-gray-400"></i>
-                            <input type="password" id="password" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="••••••••">
+                            <input type="password" name="passLog"id="password" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="••••••••">
                         </div>
                     </div>
                     <div class="flex justify-between items-center mb-6">
@@ -96,9 +96,9 @@
                         </div>
                         <a href="#" class="text-primary hover:underline">Forgot password?</a>
                     </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 mb-4">
-                        Sign In
-                    </button>
+                    <input type="submit" name = "submit" class="w-full bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 mb-4">
+
+
                     <div class="text-center">
                         <p class="text-gray-600">Don't have an account? <a href="reg.php" class="text-primary hover:underline">Sign up</a></p>
                     </div>
@@ -106,7 +106,9 @@
                 
             </div>
         </div>
-    </section>
+
+
+        </form>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 px-4 sm:px-6 lg:px-8">
@@ -157,30 +159,42 @@
     <script>
         // Initialize Feather Icons
         feather.replace();
+        
+        const form = document.getElementById("loginform");
+
+        form.addEventListener('submit', function(event)){
+            event.preventDefault();
+        }
     </script>
 </body>
-<script>
-document.querySelector("form").addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const response = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    const result = await response.text();
-
-    if (result === "SUCCESS") {
-        alert("Login successful!");
-        window.location.href = "index.php";
-    } else {
-        alert("Invalid email or password.");
-    }
-});
-</script>
-
 </html>
+
+<?php
+    include "../backend/connection.php";
+
+    $Email = $_POST['emailLog'];
+    $Pass = $_POST['passLog'];
+
+    $stmt = $conn->prepare("SELECT * FROM accounts WHERE email = ?");
+
+    if (!$stmt) {
+    die("Prepare failed: " . $conn->error);
+}
+    
+    $stmt->bind_param("s", $Email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $row = $result->fetch_assoc();
+    $hashedPass = $row['Passwords'];
+
+    
+            if ($Pass === $hashedPass) {
+        echo"<script>alert('Log in successful')</script>";
+        
+    } else {
+        echo "<script>alert('Invalid password! Try Again!')</script>";
+    }
+    
+
+?>
