@@ -1,3 +1,54 @@
+<?php
+// IMPORTANT: PHP code must be at the TOP before any HTML output
+include "../backend/connection.php";
+include "../backend/auth_session.php";
+
+// Redirect if already logged in
+if (isUserLoggedIn()) {
+    header("Location: homepage.php");
+    exit;
+}
+
+// Handle login form submission
+if($_SERVER["REQUEST_METHOD"] === "POST"){
+    $Email = $_POST['emailLog'];
+    $Pass = $_POST['passLog'];
+
+    $stmt = $conn->prepare("SELECT * FROM accounts WHERE email = ?");
+
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+    
+    $stmt->bind_param("s", $Email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $hashedPass = $row['Passwords'];
+        
+        if ($Pass === $hashedPass) {
+            // Create session with user data
+            createUserSession([
+                'id' => $row['id'],  // Make sure this matches your database column name
+                'Email' => $row['Email'],
+                'Passwords' => $row['Passwords']  // Or use username if you have it
+            ]);
+            
+            echo "<script>
+                 alert('Log in Successful');
+                 window.location.href = 'homepage.php';
+                </script>"; 
+            exit;
+        } else {
+            $loginError = "Invalid password! Try Again!";
+        }
+    } else {
+        $loginError = "Email not found! Try Again!";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,8 +109,8 @@
       <div class="hidden md:flex space-x-6 gap-20">
         <a href="index.php" class="hover:text-red-200">Home</a>
         <a href="categories.php" class="hover:text-red-200">Categories</a>
-        <a href="#" class="hover:text-red-200">Favorites</a>
-        <a href="#" class="hover:text-red-200">Collections</a>
+        <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
+        <a href="collection.php" class="hover:text-red-200">Collections</a>
       </div>
       <div class="flex items-center space-x-4">
         <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>
@@ -68,47 +119,44 @@
   </nav>
 
     <!-- Login Form -->
-        <form action="login.php" method="post" class="py-16 px-4 sm:px-6 lg:px-8"id="loginform">
-            <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden login-container">
+    <form action="login.php" method="post" class="py-16 px-4 sm:px-6 lg:px-8" id="loginform">
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden login-container">
             <div class="bg-primary text-white p-6">
                 <h2 class="text-2xl font-bold">Welcome to PinoysCravings!</h2>
                 <p class="text-gray-200">Sign in to access your favorite recipes and collections</p>
             </div>
             <div class="p-8">
-                <form>
-                    <div class="mb-6">
-                        <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
-                        <div class="relative">
-                            <i data-feather="mail" class="absolute left-3 top-3 text-gray-400"></i>
-                            <input type="email" name="emailLog" id="email" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="your@email.com">
-                        </div>
+                <?php if (isset($loginError)): ?>
+                    <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                        <?= htmlspecialchars($loginError) ?>
                     </div>
-                    <div class="mb-6">
-                        <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <div class="relative">
-                            <i data-feather="lock" class="absolute left-3 top-3 text-gray-400"></i>
-                            <input type="password" name="passLog"id="password" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="••••••••">
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center mb-6">
-                        <div class="flex items-center">
-                            
-                        </div>
-                        <a href="#" class="text-primary hover:underline">Forgot password?</a>
-                    </div>
-                    <input type="submit" name = "submit" class="w-full bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 mb-4">
-
-
-                    <div class="text-center">
-                        <p class="text-gray-600">Don't have an account? <a href="reg.php" class="text-primary hover:underline">Sign up</a></p>
-                    </div>
-                </form>
+                <?php endif; ?>
                 
+                <div class="mb-6">
+                    <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+                    <div class="relative">
+                        <i data-feather="mail" class="absolute left-3 top-3 text-gray-400"></i>
+                        <input type="email" name="emailLog" id="email" required class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="your@email.com">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                    <div class="relative">
+                        <i data-feather="lock" class="absolute left-3 top-3 text-gray-400"></i>
+                        <input type="password" name="passLog" id="password" required class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="••••••••">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center"></div>
+                    <a href="#" class="text-primary hover:underline">Forgot password?</a>
+                </div>
+                <input type="submit" name="submit" value="Sign In" class="w-full bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 mb-4 cursor-pointer">
+                <div class="text-center">
+                    <p class="text-gray-600">Don't have an account? <a href="reg.php" class="text-primary hover:underline">Sign up</a></p>
+                </div>
             </div>
         </div>
-
-
-        </form>
+    </form>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 px-4 sm:px-6 lg:px-8">
@@ -129,8 +177,8 @@
                     <ul class="space-y-2">
                         <li><a href="index.php" class="text-gray-400 hover:text-white">Home</a></li>
                         <li><a href="categories.php" class="text-gray-400 hover:text-white">Categories</a></li>
-                        <li><a href="favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
-                        <li><a href="collections.php" class="text-gray-400 hover:text-white">Collections</a></li>
+                        <li><a href="Favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
+                        <li><a href="collection.php" class="text-gray-400 hover:text-white">Collections</a></li>
                     </ul>
                 </div>
                 <div>
@@ -157,44 +205,7 @@
     </footer>
 
     <script>
-        // Initialize Feather Icons
         feather.replace();
-        
-        const form = document.getElementById("loginform");
-
-        form.addEventListener('submit', function(event)){
-            event.preventDefault();
-        }
     </script>
 </body>
 </html>
-
-<?php
-    include "../backend/connection.php";
-
-    $Email = $_POST['emailLog'];
-    $Pass = $_POST['passLog'];
-
-    $stmt = $conn->prepare("SELECT * FROM accounts WHERE email = ?");
-
-    if (!$stmt) {
-    die("Prepare failed: " . $conn->error);
-}
-    
-    $stmt->bind_param("s", $Email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $row = $result->fetch_assoc();
-    $hashedPass = $row['Passwords'];
-
-    
-            if ($Pass === $hashedPass) {
-        echo"<script>alert('Log in successful')</script>";
-        
-    } else {
-        echo "<script>alert('Invalid password! Try Again!')</script>";
-    }
-    
-
-?>

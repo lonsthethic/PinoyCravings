@@ -6,6 +6,7 @@ $isLoggedIn = isUserLoggedIn();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,22 +22,27 @@ $isLoggedIn = isUserLoggedIn();
       display: inline-flex;
       direction: rtl;
     }
+
     .star-rating input {
       display: none;
     }
+
     .star-rating label {
       color: #d8d8d8;
       font-size: 1.5rem;
       cursor: pointer;
     }
-    .star-rating input:checked ~ label,
-    .star-rating input:hover ~ label,
+
+    .star-rating input:checked~label,
+    .star-rating input:hover~label,
     .star-rating label:hover,
-    .star-rating label:hover ~ label {
+    .star-rating label:hover~label {
       color: #f87171;
+      /* light red */
     }
   </style>
 </head>
+
 <body class="bg-gray-50 font-sans">
 
   <!-- Navigation -->
@@ -72,7 +78,9 @@ $isLoggedIn = isUserLoggedIn();
       <h1 class="text-4xl md:text-5xl font-bold mb-4">Discover Authentic Filipino Recipes</h1>
       <p class="text-xl mb-8 max-w-2xl mx-auto text-red-100">From classic adobo to sweet halo-halo, explore the rich flavors of Philippine cuisine</p>
       <div class="relative max-w-xl mx-auto">
+
         
+
       </div>
     </div>
   </section>
@@ -82,21 +90,21 @@ $isLoggedIn = isUserLoggedIn();
     <div class="container mx-auto px-4">
       <h2 class="text-3xl font-bold mb-8 text-center text-red-700">Recipe Categories</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-10 justify-center">
-        <a href="categories.php" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+        <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
           <div class="h-40 bg-cover bg-center" style="background-image: url('https://www.unileverfoodsolutions.com.ph/chef-inspiration/food-delivery/10-crowd-favorite-filipino-dishes/jcr:content/parsys/set1/row2/span12/columncontrol_copy/columnctrl_parsys_2/textimage_copy/image.transform/jpeg-optimized/image.1697454873707.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Main Dishes</h3>
             <p class="text-gray-600 text-sm">24 recipes</p>
           </div>
         </a>
-        <a href="categories.php" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+        <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
           <div class="h-40 bg-cover bg-center" style="background-image: url('https://images.yummy.ph/yummy/uploads/2022/12/Eden-Yummy-Image-Insert-Cheesy-Leche-Flan.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Desserts</h3>
             <p class="text-gray-600 text-sm">18 recipes</p>
           </div>
         </a>
-        <a href="categories.php" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+        <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
           <div class="h-40 bg-cover bg-center" style="background-image: url('https://cdn.tatlerasia.com/asiatatler/i/ph/2021/05/07105034-gettyimages-1257260385_cover_1280x764.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Breakfast</h3>
@@ -113,7 +121,7 @@ $isLoggedIn = isUserLoggedIn();
       <h2 class="text-3xl font-bold mb-8 text-center text-red-700">Popular Filipino Recipes</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        <!-- Recipe Card 1 -->
+        <!-- Recipe Card Example -->
         <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up">
           <div class="relative">
             <img src="https://howtofeedaloon.com/wp-content/uploads/2025/07/filipino-chicken-adobo-overhead.jpg" alt="Adobo" class="w-full h-48 object-cover">
@@ -125,11 +133,7 @@ $isLoggedIn = isUserLoggedIn();
             <div class="flex justify-between items-start mb-2">
               <h3 class="font-bold text-xl">Chicken Adobo</h3>
               <div class="flex items-center">
-                <?php if ($isLoggedIn): ?>
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
-                <?php else: ?>
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 cursor-pointer" onclick="alert('Please login to add favorites'); window.location.href='login.php'"></i>
-                <?php endif; ?>
+                <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
               </div>
             </div>
             <p class="text-gray-600 mb-3">The Philippines' national dish featuring chicken braised in vinegar, soy sauce, and garlic.</p>
@@ -146,15 +150,14 @@ $isLoggedIn = isUserLoggedIn();
                 <input type="radio" id="1-star-1" name="rating-1" value="1" />
                 <label for="1-star-1">★</label>
               </div>
-              <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
+              <a href="#" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
             </div>
           </div>
         </div>
 
-        <!-- Recipe Card 2 -->
         <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="100">
           <div class="relative">
-            <img src="https://yummykitchentv.com/wp-content/uploads/2023/02/creamy-bicol-express-800x530.jpg" alt="Bicol Express" class="w-full h-48 object-cover">
+            <img src="https://yummykitchentv.com/wp-content/uploads/2023/02/creamy-bicol-express-800x530.jpg" alt="Adobo" class="w-full h-48 object-cover">
             <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
               <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
             </div>
@@ -163,14 +166,10 @@ $isLoggedIn = isUserLoggedIn();
             <div class="flex justify-between items-start mb-2">
               <h3 class="font-bold text-xl">Bicol Express</h3>
               <div class="flex items-center">
-                <?php if ($isLoggedIn): ?>
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
-                <?php else: ?>
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 cursor-pointer" onclick="alert('Please login to add favorites'); window.location.href='login.php'"></i>
-                <?php endif; ?>
+                <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
               </div>
             </div>
-            <p class="text-gray-600 mb-3">A fiery Filipino dish made with pork simmered in coconut milk, shrimp paste, and lots of chili peppers.</p>
+            <p class="text-gray-600 mb-3">A fiery Filipino dish made with pork simmered in coconut milk, shrimp paste, and lots of chili peppers — a creamy, spicy specialty from the Bicol region.</p>
             <div class="flex justify-between items-center">
               <div class="star-rating">
                 <input type="radio" id="5-stars-2" name="rating-2" value="5" />
@@ -188,11 +187,9 @@ $isLoggedIn = isUserLoggedIn();
             </div>
           </div>
         </div>
-
-        <!-- Recipe Card 3 -->
         <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="200">
           <div class="relative">
-            <img src="https://www.nestlegoodnes.com/ph/sites/default/files/styles/1_1_768px_width/public/srh_recipes/41d16b3eb7ce08aba9e9114f304f5d87.jpg.webp?itok=IzwghKEf" alt="Pork Adobo" class="w-full h-48 object-cover">
+            <img src="https://www.nestlegoodnes.com/ph/sites/default/files/styles/1_1_768px_width/public/srh_recipes/41d16b3eb7ce08aba9e9114f304f5d87.jpg.webp?itok=IzwghKEf" alt="Adobo" class="w-full h-48 object-cover">
             <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
               <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
             </div>
@@ -201,14 +198,10 @@ $isLoggedIn = isUserLoggedIn();
             <div class="flex justify-between items-start mb-2">
               <h3 class="font-bold text-xl">Pork Adobo</h3>
               <div class="flex items-center">
-                <?php if ($isLoggedIn): ?>
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
-                <?php else: ?>
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 cursor-pointer" onclick="alert('Please login to add favorites'); window.location.href='login.php'"></i>
-                <?php endif; ?>
+                <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
               </div>
             </div>
-            <p class="text-gray-600 mb-3">Classic Filipino pork dish braised in vinegar, soy sauce, and garlic.</p>
+            <p class="text-gray-600 mb-3">The Philippines' national dish featuring chicken braised in vinegar, soy sauce, and garlic.</p>
             <div class="flex justify-between items-center">
               <div class="star-rating">
                 <input type="radio" id="5-stars-3" name="rating-3" value="5" />
@@ -229,10 +222,13 @@ $isLoggedIn = isUserLoggedIn();
 
       </div>
       <div class="text-center mt-8">
-        <a href="categories.php" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700">View All Recipes</a>
+        <a href="recipes.php" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700">View All Recipes</a>
       </div>
     </div>
   </section>
+
+  <!-- Call to Action -->
+
 
   <!-- Footer -->
   <footer class="bg-gray-800 text-white py-12">
@@ -253,9 +249,9 @@ $isLoggedIn = isUserLoggedIn();
         <div>
           <h3 class="font-bold text-lg mb-4">Explore</h3>
           <ul class="space-y-2">
-            <li><a href="categories.php" class="text-gray-400 hover:text-white">Recipes</a></li>
-            <li><a href="categories.php" class="text-gray-400 hover:text-white">Categories</a></li>
-            <li><a href="Favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Recipes</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Categories</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Collections</a></li>
           </ul>
         </div>
         <div>
@@ -264,6 +260,7 @@ $isLoggedIn = isUserLoggedIn();
             <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
             <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
             <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
           </ul>
         </div>
         <div>
@@ -286,4 +283,5 @@ $isLoggedIn = isUserLoggedIn();
     feather.replace();
   </script>
 </body>
+
 </html>
