@@ -1,97 +1,62 @@
 <?php
 require_once "../backend/auth_session.php";
+require_once "../backend/connection.php";
+
 $user = getCurrentUser();
 $isLoggedIn = isUserLoggedIn();
-?>
 
-<?php
-include "../backend/connection.php";
-
-// Get the dish ID from URL
-$dishID = isset($_GET['id']) ? intval($_GET['id']) : (isset($_GET['dish']) ? intval($_GET['dish']) : 0);
-
-// If no valid ID, redirect to collection page
-if ($dishID <= 0) {
-    header("Location: collection.php");
+// Redirect to login if not logged in
+if (!$isLoggedIn) {
+    header("Location: login.php");
     exit();
 }
 
-// Fetch dish details
-$dishQuery = "SELECT * FROM dish WHERE dishID = ?";
-$stmt = $conn->prepare($dishQuery);
-$stmt->bind_param("i", $dishID);
+// Get user's favorite dishes
+$getFavorites = "SELECT DISTINCT dish.dishID, title AS dishName, img, description, category,
+                 GROUP_CONCAT(ingredients.ingredients SEPARATOR ', ') as all_ingredients
+                 FROM favorites
+                 INNER JOIN dish ON favorites.dishID = dish.dishID
+                 LEFT JOIN ingredients ON dish.dishID = ingredients.dishID
+                 WHERE favorites.id = ?
+                 GROUP BY dish.dishID, title, img, description, category";
+
+$stmt = $conn->prepare($getFavorites);
+$stmt->bind_param("i", $user['id']);
 $stmt->execute();
-$dishResult = $stmt->get_result();
-
-if ($dishResult->num_rows === 0) {
-    header("Location: collection.php");
-    exit();
-}
-
-$dish = $dishResult->fetch_assoc();
-
-// Fetch ingredients
-$ingredientsQuery = "SELECT ingredients FROM ingredients WHERE dishID = ?";
-$stmtIng = $conn->prepare($ingredientsQuery);
-$stmtIng->bind_param("i", $dishID);
-$stmtIng->execute();
-$ingredientsResult = $stmtIng->get_result();
-
-// Fetch instructions
-$instructionsQuery = "SELECT Instructions FROM instruction WHERE dishID = ? ORDER BY InstructionID";
-$stmtInst = $conn->prepare($instructionsQuery);
-$stmtInst->bind_param("i", $dishID);
-$stmtInst->execute();
-$instructionsResult = $stmtInst->get_result();
+$favoritesData = $stmt->get_result();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($dish['title']) ?> - PinoysCravings</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#E63946',
-                        secondary: '#F1FAEE',
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <title>My Favorites - Pinoys Cravings</title>
+    
     <style>
-        .ingredient-checkbox:checked + .ingredient-label {
-            text-decoration: line-through;
-            color: #9CA3AF;
+        /* Heart icon styles */
+        .heart-filled {
+            fill: #E63946;
+            stroke: #E63946;
         }
-        .instruction-step {
-            counter-increment: step-counter;
+
+        .heart-outline {
+            fill: none;
+            stroke: #9CA3AF;
         }
-        .instruction-step:before {
-            content: counter(step-counter);
-            background-color: #E63946;
-            color: white;
-            font-weight: bold;
-            width: 1.75em;
-            height: 1.75em;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.75rem;
-            flex-shrink: 0;
+
+        .heart-outline:hover {
+            stroke: #E63946;
         }
     </style>
 </head>
-<body class="bg-secondary min-h-screen">
+<body class="bg-gray-50 font-sans">
     <!-- Navigation -->
     <nav class="bg-red-700 text-white shadow-lg">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -99,134 +64,105 @@ $instructionsResult = $stmtInst->get_result();
                 <i data-feather="clock" class="w-6 h-6"></i>
                 <span class="text-xl font-bold"><a href="index.php" class="hover:text-red-200">Pinoys Cravings</a></span>
             </div>
-            <div class="hidden md:flex space-x-6 gap-20">
+            <div class="hidden md:flex space-x-6 gap-20 font-medium">
                 <a href="index.php" class="hover:text-red-200">Home</a>
                 <a href="categories.php" class="hover:text-red-200">Categories</a>
                 <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
-                <a href="collection.php" class="hover:text-red-200">Collections</a>
+                <a href="collection.php" class="hover:text-red-200">About Us</a>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>
+                <span class="text-sm">Welcome, <?= htmlspecialchars($user['email']) ?>!</span>
+                <a href="../backend/logout.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500 font-medium flex items-center">
+                    <i data-feather="log-out" class="w-4 h-4 mr-2"></i>
+                    Logout
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Recipe Content -->
     <main class="container mx-auto px-4 py-8">
-        <div class="max-w-4xl mx-auto">
-            <!-- Back Button -->
-            <div class="mb-6">
-                <a href="javascript:history.back()" class="inline-flex items-center text-red-600 hover:text-red-700 font-medium">
-                    <i data-feather="arrow-left" class="mr-2"></i>
-                    Back
-                </a>
-            </div>
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                <i data-feather="heart" class="mr-3 text-red-600"></i>
+                My Favorite Recipes
+            </h1>
+            <a class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 flex items-center" href="categories.php">
+                <i data-feather="arrow-left" class="mr-2"></i>
+                Back to Categories
+            </a>
+        </div>
 
-            <!-- Recipe Header -->
-            <div class="mb-8">
-                <div class="flex justify-between items-start mb-4">
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800">
-                        <?= htmlspecialchars($dish['title']) ?>
-                    </h1>
-                    <button class="text-gray-400 hover:text-red-500">
-                        <i data-feather="heart" class="w-8 h-8"></i>
-                    </button>
-                </div>
-                
-                <div class="flex flex-wrap items-center text-gray-600 mb-4">
-                    <div class="flex items-center mb-2">
-                        <i data-feather="tag" class="mr-2"></i>
-                        <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
-                            <?= htmlspecialchars($dish['category'] ?? 'Main Dish') ?>
-                        </span>
-                    </div>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 drop-shadow-md">
+            <?php if ($favoritesData && $favoritesData->num_rows > 0): ?>
+                <?php 
+                $cardIndex = 0;
+                while ($row = $favoritesData->fetch_assoc()): 
+                    $delay = ($cardIndex * 100) % 400;
+                    $cardIndex++;
+                ?>
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-dish-card="<?= htmlspecialchars($row['dishID']) ?>">
+                        <div class="relative">
+                            <img src="<?= htmlspecialchars($row['img']) ?>"
+                                alt="<?= htmlspecialchars($row['dishName']) ?>"
+                                class="w-full h-48 object-cover"
+                                loading="lazy"
+                                decoding="async">
 
-                <img src="<?= htmlspecialchars($dish['img']) ?>" 
-                     alt="<?= htmlspecialchars($dish['title']) ?>" 
-                     class="w-full h-96 object-cover rounded-lg shadow-md"
-                     loading="lazy">
-            </div>
+                            <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                <i data-feather="utensils" class="inline w-3 h-3 mr-1"></i> <?= htmlspecialchars($row['dishID']) ?>
+                            </div>
+                        </div>
 
-            <!-- Description -->
-            <?php if (!empty($dish['description'])): ?>
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">About This Recipe</h2>
-                <p class="text-gray-700"><?= htmlspecialchars($dish['description']) ?></p>
-            </div>
-            <?php endif; ?>
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">
+                                    <?= htmlspecialchars($row['dishName']) ?>
+                                </h3>
 
-            <!-- Recipe Content -->
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Ingredients -->
-                <div class="md:col-span-1">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                            <i data-feather="shopping-bag" class="mr-2 text-primary"></i>
-                            Ingredients
-                        </h2>
-                        <ul class="space-y-3">
-                            <?php 
-                            $ingCount = 0;
-                            while ($ingredient = $ingredientsResult->fetch_assoc()): 
-                                $ingCount++;
-                            ?>
-                            <li class="flex items-start">
-                                <input type="checkbox" 
-                                       id="ing<?= $ingCount ?>" 
-                                       class="ingredient-checkbox mt-1 mr-3">
-                                <label for="ing<?= $ingCount ?>" 
-                                       class="ingredient-label flex-1">
-                                    <?= htmlspecialchars($ingredient['ingredients']) ?>
-                                </label>
-                            </li>
-                            <?php endwhile; ?>
-                            
-                            <?php if ($ingCount === 0): ?>
-                            <li class="text-gray-500 italic">No ingredients listed</li>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Instructions -->
-                <div class="md:col-span-2">
-                    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                            <i data-feather="book-open" class="mr-2 text-primary"></i>
-                            Instructions
-                        </h2>
-                        <ol class="space-y-4 list-none pl-0" style="counter-reset: step-counter;">
-                            <?php 
-                            $instCount = 0;
-                            while ($instruction = $instructionsResult->fetch_assoc()): 
-                                $instCount++;
-                            ?>
-                            <li class="instruction-step flex items-start">
-                                <div>
-                                    <p class="text-gray-700">
-                                        <?= htmlspecialchars($instruction['Instructions']) ?>
-                                    </p>
+                                <div class="flex items-center">
+                                    <i data-feather="heart" 
+                                       class="w-5 h-5 cursor-pointer transition-colors heart-filled"
+                                       data-dish-id="<?= htmlspecialchars($row['dishID']) ?>"
+                                       onclick="toggleFavorite(this)"></i>
                                 </div>
-                            </li>
-                            <?php endwhile; ?>
-                            
-                            <?php if ($instCount === 0): ?>
-                            <li class="text-gray-500 italic">No instructions available</li>
-                            <?php endif; ?>
-                        </ol>
-                    </div>
+                            </div>
 
-                   
+                            <div class="mb-3">
+                                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
+                                    <i data-feather="tag" class="inline w-3 h-3 mr-1"></i>
+                                    <?= htmlspecialchars($row['category'] ?? 'Main Dish') ?>
+                                </span>
+                            </div>
 
+                            <p class="text-gray-600 mb-3 text-sm line-clamp-2">
+                                <?= htmlspecialchars($row['description']) ?>
+                            </p>
+
+                            <div class="flex justify-between items-center">
+                                <a href="recipe.php?id=<?= urlencode($row['dishID']) ?>"
+                                   class="text-red-600 hover:text-red-700 font-medium">
+                                    View Recipe
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                <?php endwhile; ?>
+
+            <?php else: ?>
+                <div class="col-span-full bg-white rounded-lg shadow-md p-8 text-center">
+                    <i data-feather="heart" class="w-16 h-16 mx-auto text-gray-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">No Favorites Yet</h2>
+                    <p class="text-gray-600 mb-4">Start adding recipes to your favorites by clicking the heart icon on any recipe.</p>
+                    <a href="categories.php" class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded transition duration-300">
+                        Browse Recipes
+                    </a>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 mt-16">
+    <footer class="bg-gray-800 text-white py-12">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
@@ -236,23 +172,17 @@ $instructionsResult = $stmtInst->get_result();
                     </div>
                     <p class="text-gray-400">Celebrating the rich and diverse flavors of Filipino cuisine.</p>
                     <div class="flex space-x-4 mt-4">
-                        <a href="https://www.facebook.com/" class="text-gray-400 hover:text-white">
-                            <i data-feather="facebook" class="w-5 h-5"></i>
-                        </a>
-                        <a href="https://www.instagram.com/" class="text-gray-400 hover:text-white">
-                            <i data-feather="instagram" class="w-5 h-5"></i>
-                        </a>
-                        <a href="https://www.youtube.com/" class="text-gray-400 hover:text-white">
-                            <i data-feather="youtube" class="w-5 h-5"></i>
-                        </a>
+                        <a href="https://www.facebook.com/" class="text-gray-400 hover:text-white"><i data-feather="facebook" class="w-5 h-5"></i></a>
+                        <a href="https://www.instagram.com/" class="text-gray-400 hover:text-white"><i data-feather="instagram" class="w-5 h-5"></i></a>
+                        <a href="https://www.youtube.com/" class="text-gray-400 hover:text-white"><i data-feather="youtube" class="w-5 h-5"></i></a>
                     </div>
                 </div>
                 <div>
                     <h3 class="font-bold text-lg mb-4">Explore</h3>
                     <ul class="space-y-2">
-                        <li><a href="index.php" class="text-gray-400 hover:text-white">Recipes</a></li>
+                        <li><a href="categories.php" class="text-gray-400 hover:text-white">Recipes</a></li>
                         <li><a href="categories.php" class="text-gray-400 hover:text-white">Categories</a></li>
-                        <li><a href="collection.php" class="text-gray-400 hover:text-white">Collections</a></li>
+                        <li><a href="Favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
                     </ul>
                 </div>
                 <div>
@@ -267,15 +197,9 @@ $instructionsResult = $stmtInst->get_result();
                 <div>
                     <h4 class="font-bold text-lg mb-4">Contact Us</h4>
                     <ul class="space-y-2">
-                        <li class="flex items-center text-gray-400">
-                            <i data-feather="mail" class="mr-2"></i> BSIT2.1B@pinoyscravings.com
-                        </li>
-                        <li class="flex items-center text-gray-400">
-                            <i data-feather="phone" class="mr-2"></i> +64 0995658323
-                        </li>
-                        <li class="flex items-center text-gray-400">
-                            <i data-feather="map-pin" class="mr-2"></i> Dasmarinas, Cavite, Philippines
-                        </li>
+                        <li class="flex items-center text-gray-400"><i data-feather="mail" class="mr-2"></i> BSIT2.1B@pinoyscravings.com</li>
+                        <li class="flex items-center text-gray-400"><i data-feather="phone" class="mr-2"></i> +64 0995658323</li>
+                        <li class="flex items-center text-gray-400"><i data-feather="map-pin" class="mr-2"></i> Dasmarinas, Cavite, Philippines</li>
                     </ul>
                 </div>
             </div>
@@ -286,21 +210,70 @@ $instructionsResult = $stmtInst->get_result();
     </footer>
 
     <script>
-        // Checkbox functionality for ingredients
-        const checkboxes = document.querySelectorAll('.ingredient-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const label = this.nextElementSibling;
-                if (this.checked) {
-                    label.classList.add('line-through', 'text-gray-400');
-                } else {
-                    label.classList.remove('line-through', 'text-gray-400');
-                }
-            });
+        AOS.init({
+            duration: 800,
+            once: true,
+            disable: 'mobile'
         });
 
-        // Initialize Feather Icons
         feather.replace();
+
+        // Toggle favorite function - NO CONFIRMATION DIALOG, NO ANIMATION
+        function toggleFavorite(element) {
+            const dishID = element.getAttribute('data-dish-id');
+            const dishCard = document.querySelector(`[data-dish-card="${dishID}"]`);
+            
+            fetch('../backend/favorites_handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=toggle&dishID=${encodeURIComponent(dishID)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.isFavorite) {
+                        element.classList.remove('heart-outline');
+                        element.classList.add('heart-filled');
+                        showToast('Added to favorites!');
+                    } else {
+                        // Remove from favorites - immediately remove the card
+                        showToast('Removed from favorites!');
+                        
+                        if (dishCard) {
+                            dishCard.remove();
+                            
+                            // Check if there are no more favorites
+                            const remainingCards = document.querySelectorAll('[data-dish-card]');
+                            if (remainingCards.length === 0) {
+                                location.reload(); // Reload to show "No Favorites Yet" message
+                            }
+                        }
+                    }
+                    feather.replace();
+                } else {
+                    showToast(data.message || 'Failed to update favorite');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred. Please try again.');
+            });
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html>

@@ -110,7 +110,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         <a href="index.php" class="hover:text-red-200">Home</a>
         <a href="categories.php" class="hover:text-red-200">Categories</a>
         <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
-        <a href="collection.php" class="hover:text-red-200">Collections</a>
+        <a href="collection.php" class="hover:text-red-200">About Us</a>
       </div>
       <div class="flex items-center space-x-4">
         <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>

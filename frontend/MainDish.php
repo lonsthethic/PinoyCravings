@@ -1,7 +1,9 @@
 <?php
 // Fetch data BEFORE any HTML output
-include "../backend/connection.php";
-
+require_once "../backend/connection.php";
+require_once "../backend/auth_session.php";
+$user = getCurrentUser();
+$isLoggedIn = isUserLoggedIn();
 $getDish = "SELECT DISTINCT dish.dishID, title AS dishName, img, description,
             GROUP_CONCAT(ingredients.ingredients SEPARATOR ', ') as all_ingredients
             FROM dish 
@@ -9,6 +11,17 @@ $getDish = "SELECT DISTINCT dish.dishID, title AS dishName, img, description,
             GROUP BY dish.dishID, title, img";
 
 $dishData = $conn->query($getDish);
+
+$userFavorites = [];
+if ($isLoggedIn) {
+  $favStmt = $conn->prepare("SELECT dishID FROM favorites WHERE id = ?");
+  $favStmt->bind_param("i", $user['id']);
+  $favStmt->execute();
+  $favResult = $favStmt->get_result();
+  while ($favRow = $favResult->fetch_assoc()) {
+    $userFavorites[] = $favRow['dishID'];
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,14 +35,15 @@ $dishData = $conn->query($getDish);
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-  
+  <script src="https://unpkg.com/feather-icons"></script>
+
   <style>
     /* Performance optimization */
     * {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-    
+
     img {
       will-change: auto;
     }
@@ -49,10 +63,18 @@ $dishData = $conn->query($getDish);
         <a href="index.php" class="hover:text-red-200">Home</a>
         <a href="categories.php" class="hover:text-red-200">Categories</a>
         <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
-        <a href="collection.php" class="hover:text-red-200">Collections</a>
+        <a href="collection.php" class="hover:text-red-200">About Us</a>
       </div>
       <div class="flex items-center space-x-4">
-        <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>
+        <?php if ($isLoggedIn): ?>
+          <span class="text-sm">Welcome, <?= htmlspecialchars($user['email']) ?>!</span>
+          <a href="../backend/logout.php" class="flex items-center px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">
+            <i data-feather="log-out" class="w-4 h-4 mr-2"></i>
+            Logout
+          </a>
+        <?php else: ?>
+          <a href="login.php" class="px-4 py-2 rounded-md bg-red-600 hover:bg-red-500">Login</a>
+        <?php endif; ?>
       </div>
     </div>
   </nav>
@@ -61,8 +83,8 @@ $dishData = $conn->query($getDish);
 
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-800 flex items-center">
-        <i data-feather="bookmark" class="mr-3 text-red-600"></i>
-        Your Collections
+        <i data-feather="book" class="mr-3 text-red-600"></i>
+        Main Dishes
       </h1>
       <a class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 flex items-center" href="categories.php">
         <i data-feather="arrow-left" class="mr-2"></i>
@@ -73,11 +95,15 @@ $dishData = $conn->query($getDish);
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 drop-shadow-md">
 
       <?php if ($dishData && $dishData->num_rows > 0): ?>
-        <?php 
+        <?php
         $cardIndex = 0;
-        while ($row = $dishData->fetch_assoc()): 
+        while ($row = $dishData->fetch_assoc()):
           $delay = ($cardIndex * 100) % 400;
           $cardIndex++;
+
+          $isFavorited = in_array($row['dishID'], $userFavorites);  // ← ADD THIS
+
+
         ?>
 
           <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
@@ -101,8 +127,17 @@ $dishData = $conn->query($getDish);
                 </h3>
 
                 <div class="flex items-center">
-                  <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors"></i>
-                </div>
+    <?php if ($isLoggedIn): ?>
+        <i data-feather="heart" 
+           class="w-5 h-5 cursor-pointer transition-colors favorite-heart <?= $isFavorited ? 'heart-filled' : 'heart-outline' ?>"
+           data-dish-id="<?= htmlspecialchars($row['dishID']) ?>"
+           onclick="toggleFavorite(this)"></i>
+    <?php else: ?>
+        <i data-feather="heart" 
+           class="w-5 h-5 cursor-pointer transition-colors heart-outline"
+           onclick="alert('Please login to add favorites'); window.location.href='login.php'"></i>
+    <?php endif; ?>
+</div>
               </div>
 
               <p class="text-gray-600 mb-3 text-sm line-clamp-2">
@@ -111,7 +146,7 @@ $dishData = $conn->query($getDish);
 
               <div class="flex justify-between items-center">
                 <!-- Pass dish ID to recipe page -->
-                <a href="Favorites.php?id=<?= urlencode($row['dishID']) ?>"
+                <a href="recipe.php?id=<?= urlencode($row['dishID']) ?>"
                   class="text-red-600 hover:text-red-700 font-medium">
                   View Recipe
                 </a>
@@ -190,7 +225,80 @@ $dishData = $conn->query($getDish);
     });
 
     feather.replace();
+
+   // Toggle favorite function
+        function toggleFavorite(element) {
+            const dishID = element.getAttribute('data-dish-id');
+            
+            fetch('../backend/favorites_handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=toggle&dishID=${encodeURIComponent(dishID)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.isFavorite) {
+                        element.classList.remove('heart-outline');
+                        element.classList.add('heart-filled');
+                        showToast('Added to favorites!');
+                    } else {
+                        element.classList.remove('heart-filled');
+                        element.classList.add('heart-outline');
+                        showToast('Removed from favorites!');
+                    }
+                    feather.replace();
+                } else {
+                    alert(data.message || 'Failed to update favorite');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
   </script>
+  <style>
+    /* Performance optimization */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    img {
+      will-change: auto;
+    }
+
+    /* ADD THESE: */
+    .heart-filled {
+      fill: #E63946;
+      stroke: #E63946;
+    }
+
+    .heart-outline {
+      fill: none;
+      stroke: #9CA3AF;
+    }
+
+    .heart-outline:hover {
+      stroke: #E63946;
+    }
+  </style>
 </body>
 
 </html>

@@ -56,7 +56,7 @@ $isLoggedIn = isUserLoggedIn();
         <a href="index.php" class="hover:text-red-200">Home</a>
         <a href="categories.php" class="hover:text-red-200">Categories</a>
         <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
-        <a href="collection.php" class="hover:text-red-200">Collections</a>
+        <a href="collection.php" class="hover:text-red-200">About Us</a>
       </div>
       <div class="flex items-center space-x-4">
         <?php if ($isLoggedIn): ?>
