@@ -134,18 +134,7 @@ $isLoggedIn = isUserLoggedIn();
             </div>
             <p class="text-gray-600 mb-3">The Philippines' national dish featuring chicken braised in vinegar, soy sauce, and garlic.</p>
             <div class="flex justify-between items-center">
-              <div class="star-rating">
-                <input type="radio" id="5-stars-1" name="rating-1" value="5" />
-                <label for="5-stars-1">★</label>
-                <input type="radio" id="4-stars-1" name="rating-1" value="4" />
-                <label for="4-stars-1">★</label>
-                <input type="radio" id="3-stars-1" name="rating-1" value="3" />
-                <label for="3-stars-1">★</label>
-                <input type="radio" id="2-stars-1" name="rating-1" value="2" />
-                <label for="2-stars-1">★</label>
-                <input type="radio" id="1-star-1" name="rating-1" value="1" />
-                <label for="1-star-1">★</label>
-              </div>
+              
               <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
             </div>
           </div>
@@ -172,18 +161,7 @@ $isLoggedIn = isUserLoggedIn();
             </div>
             <p class="text-gray-600 mb-3">A fiery Filipino dish made with pork simmered in coconut milk, shrimp paste, and lots of chili peppers.</p>
             <div class="flex justify-between items-center">
-              <div class="star-rating">
-                <input type="radio" id="5-stars-2" name="rating-2" value="5" />
-                <label for="5-stars-2">★</label>
-                <input type="radio" id="4-stars-2" name="rating-2" value="4" />
-                <label for="4-stars-2">★</label>
-                <input type="radio" id="3-stars-2" name="rating-2" value="3" />
-                <label for="3-stars-2">★</label>
-                <input type="radio" id="2-stars-2" name="rating-2" value="2" />
-                <label for="2-stars-2">★</label>
-                <input type="radio" id="1-star-2" name="rating-2" value="1" />
-                <label for="1-star-2">★</label>
-              </div>
+              
               <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
             </div>
           </div>
@@ -210,18 +188,7 @@ $isLoggedIn = isUserLoggedIn();
             </div>
             <p class="text-gray-600 mb-3">Classic Filipino pork dish braised in vinegar, soy sauce, and garlic.</p>
             <div class="flex justify-between items-center">
-              <div class="star-rating">
-                <input type="radio" id="5-stars-3" name="rating-3" value="5" />
-                <label for="5-stars-3">★</label>
-                <input type="radio" id="4-stars-3" name="rating-3" value="4" />
-                <label for="4-stars-3">★</label>
-                <input type="radio" id="3-stars-3" name="rating-3" value="3" />
-                <label for="3-stars-3">★</label>
-                <input type="radio" id="2-stars-3" name="rating-3" value="2" />
-                <label for="2-stars-3">★</label>
-                <input type="radio" id="1-star-3" name="rating-3" value="1" />
-                <label for="1-star-3">★</label>
-              </div>
+             
               <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
             </div>
           </div>

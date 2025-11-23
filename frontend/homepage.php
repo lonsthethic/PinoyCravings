@@ -1,7 +1,28 @@
 <?php
 require_once "../backend/auth_session.php";
+require_once "../backend/connection.php";
+
 $user = getCurrentUser();
 $isLoggedIn = isUserLoggedIn();
+
+// Get user's favorites if logged in
+$userFavorites = [];
+if ($isLoggedIn) {
+  $favStmt = $conn->prepare("SELECT dishID FROM favorites WHERE id = ?");
+  $favStmt->bind_param("i", $user['id']);
+  $favStmt->execute();
+  $favResult = $favStmt->get_result();
+  while ($favRow = $favResult->fetch_assoc()) {
+    $userFavorites[] = $favRow['dishID'];
+  }
+}
+
+// Fetch featured recipes (you can customize this query)
+$featuredRecipes = $conn->query("
+  SELECT dishID, title AS dishName, img, description 
+  FROM dish 
+  LIMIT 3
+");
 ?>
 
 <!DOCTYPE html>
@@ -18,27 +39,19 @@ $isLoggedIn = isUserLoggedIn();
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
-    .star-rating {
-      display: inline-flex;
-      direction: rtl;
+    /* Heart icon styles */
+    .heart-filled {
+      fill: #E63946;
+      stroke: #E63946;
     }
 
-    .star-rating input {
-      display: none;
+    .heart-outline {
+      fill: none;
+      stroke: #9CA3AF;
     }
 
-    .star-rating label {
-      color: #d8d8d8;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .star-rating input:checked~label,
-    .star-rating input:hover~label,
-    .star-rating label:hover,
-    .star-rating label:hover~label {
-      color: #f87171;
-      /* light red */
+    .heart-outline:hover {
+      stroke: #E63946;
     }
   </style>
 </head>
@@ -56,7 +69,7 @@ $isLoggedIn = isUserLoggedIn();
         <a href="index.php" class="hover:text-red-200">Home</a>
         <a href="categories.php" class="hover:text-red-200">Categories</a>
         <a href="Favorites.php" class="hover:text-red-200">Favorites</a>
-        <a href="collection.php" class="hover:text-red-200">About Us</a>
+        <a href="about.php" class="hover:text-red-200">About Us</a>
       </div>
       <div class="flex items-center space-x-4">
         <?php if ($isLoggedIn): ?>
@@ -77,11 +90,6 @@ $isLoggedIn = isUserLoggedIn();
     <div class="container mx-auto px-4 text-center">
       <h1 class="text-4xl md:text-5xl font-bold mb-4">Discover Authentic Filipino Recipes</h1>
       <p class="text-xl mb-8 max-w-2xl mx-auto text-red-100">From classic adobo to sweet halo-halo, explore the rich flavors of Philippine cuisine</p>
-      <div class="relative max-w-xl mx-auto">
-
-        
-
-      </div>
     </div>
   </section>
 
@@ -90,21 +98,21 @@ $isLoggedIn = isUserLoggedIn();
     <div class="container mx-auto px-4">
       <h2 class="text-3xl font-bold mb-8 text-center text-red-700">Recipe Categories</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-10 justify-center">
-        <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+        <a href="MainDishes.php" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
           <div class="h-40 bg-cover bg-center" style="background-image: url('https://www.unileverfoodsolutions.com.ph/chef-inspiration/food-delivery/10-crowd-favorite-filipino-dishes/jcr:content/parsys/set1/row2/span12/columncontrol_copy/columnctrl_parsys_2/textimage_copy/image.transform/jpeg-optimized/image.1697454873707.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Main Dishes</h3>
             <p class="text-gray-600 text-sm">24 recipes</p>
           </div>
         </a>
-        <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+        <a href="Dessert.php" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
           <div class="h-40 bg-cover bg-center" style="background-image: url('https://images.yummy.ph/yummy/uploads/2022/12/Eden-Yummy-Image-Insert-Cheesy-Leche-Flan.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Desserts</h3>
             <p class="text-gray-600 text-sm">18 recipes</p>
           </div>
         </a>
-        <a href="#" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+        <a href="Breakfast.php" class="category-card bg-red-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
           <div class="h-40 bg-cover bg-center" style="background-image: url('https://cdn.tatlerasia.com/asiatatler/i/ph/2021/05/07105034-gettyimages-1257260385_cover_1280x764.jpg');"></div>
           <div class="p-4">
             <h3 class="font-semibold text-lg">Breakfast</h3>
@@ -121,114 +129,75 @@ $isLoggedIn = isUserLoggedIn();
       <h2 class="text-3xl font-bold mb-8 text-center text-red-700">Popular Filipino Recipes</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        <!-- Recipe Card Example -->
-        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up">
-          <div class="relative">
-            <img src="https://howtofeedaloon.com/wp-content/uploads/2025/07/filipino-chicken-adobo-overhead.jpg" alt="Adobo" class="w-full h-48 object-cover">
-            <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
-            </div>
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-bold text-xl">Chicken Adobo</h3>
-              <div class="flex items-center">
-                <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
+        <?php if ($featuredRecipes && $featuredRecipes->num_rows > 0): ?>
+          <?php 
+          $delay = 0;
+          while ($recipe = $featuredRecipes->fetch_assoc()): 
+            $isFavorited = in_array($recipe['dishID'], $userFavorites);
+          ?>
+            <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="<?= $delay ?>">
+              <div class="relative">
+                <img src="<?= htmlspecialchars($recipe['img']) ?>" alt="<?= htmlspecialchars($recipe['dishName']) ?>" class="w-full h-48 object-cover">
+                <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                  <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-2">
+                  <h3 class="font-bold text-xl"><?= htmlspecialchars($recipe['dishName']) ?></h3>
+                  <div class="flex items-center">
+                    <?php if ($isLoggedIn): ?>
+                      <i data-feather="heart" 
+                         class="w-5 h-5 cursor-pointer transition-colors <?= $isFavorited ? 'heart-filled' : 'heart-outline' ?>"
+                         data-dish-id="<?= htmlspecialchars($recipe['dishID']) ?>"
+                         onclick="toggleFavorite(this)"></i>
+                    <?php else: ?>
+                      <i data-feather="heart" 
+                         class="w-5 h-5 cursor-pointer transition-colors heart-outline"
+                         onclick="showToast('Please login to add favorites'); setTimeout(() => { window.location.href='login.php'; }, 1500);"></i>
+                    <?php endif; ?>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-3"><?= htmlspecialchars($recipe['description']) ?></p>
+                <div class="flex justify-between items-center">
+                  <a href="recipe.php?id=<?= urlencode($recipe['dishID']) ?>" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
+                </div>
               </div>
             </div>
-            <p class="text-gray-600 mb-3">The Philippines' national dish featuring chicken braised in vinegar, soy sauce, and garlic.</p>
-            <div class="flex justify-between items-center">
-              <div class="star-rating">
-                <input type="radio" id="5-stars-1" name="rating-1" value="5" />
-                <label for="5-stars-1">★</label>
-                <input type="radio" id="4-stars-1" name="rating-1" value="4" />
-                <label for="4-stars-1">★</label>
-                <input type="radio" id="3-stars-1" name="rating-1" value="3" />
-                <label for="3-stars-1">★</label>
-                <input type="radio" id="2-stars-1" name="rating-1" value="2" />
-                <label for="2-stars-1">★</label>
-                <input type="radio" id="1-star-1" name="rating-1" value="1" />
-                <label for="1-star-1">★</label>
-              </div>
-              <a href="#" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="100">
-          <div class="relative">
-            <img src="https://yummykitchentv.com/wp-content/uploads/2023/02/creamy-bicol-express-800x530.jpg" alt="Adobo" class="w-full h-48 object-cover">
-            <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
-            </div>
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-bold text-xl">Bicol Express</h3>
-              <div class="flex items-center">
-                <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
+          <?php 
+            $delay += 100;
+          endwhile; 
+          ?>
+        <?php else: ?>
+          <!-- Fallback static recipes if database is empty -->
+          <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up">
+            <div class="relative">
+              <img src="https://howtofeedaloon.com/wp-content/uploads/2025/07/filipino-chicken-adobo-overhead.jpg" alt="Adobo" class="w-full h-48 object-cover">
+              <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
               </div>
             </div>
-            <p class="text-gray-600 mb-3">A fiery Filipino dish made with pork simmered in coconut milk, shrimp paste, and lots of chili peppers — a creamy, spicy specialty from the Bicol region.</p>
-            <div class="flex justify-between items-center">
-              <div class="star-rating">
-                <input type="radio" id="5-stars-2" name="rating-2" value="5" />
-                <label for="5-stars-2">★</label>
-                <input type="radio" id="4-stars-2" name="rating-2" value="4" />
-                <label for="4-stars-2">★</label>
-                <input type="radio" id="3-stars-2" name="rating-2" value="3" />
-                <label for="3-stars-2">★</label>
-                <input type="radio" id="2-stars-2" name="rating-2" value="2" />
-                <label for="2-stars-2">★</label>
-                <input type="radio" id="1-star-2" name="rating-2" value="1" />
-                <label for="1-star-2">★</label>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-xl">Chicken Adobo</h3>
+                <div class="flex items-center">
+                  <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
+                </div>
               </div>
-              <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="200">
-          <div class="relative">
-            <img src="https://www.nestlegoodnes.com/ph/sites/default/files/styles/1_1_768px_width/public/srh_recipes/41d16b3eb7ce08aba9e9114f304f5d87.jpg.webp?itok=IzwghKEf" alt="Adobo" class="w-full h-48 object-cover">
-            <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              <i data-feather="clock" class="inline w-3 h-3 mr-1"></i> 45 mins
-            </div>
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-bold text-xl">Pork Adobo</h3>
-              <div class="flex items-center">
-                <i data-feather="heart" class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer"></i>
+              <p class="text-gray-600 mb-3">The Philippines' national dish featuring chicken braised in vinegar, soy sauce, and garlic.</p>
+              <div class="flex justify-between items-center">
+                <a href="categories.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
               </div>
             </div>
-            <p class="text-gray-600 mb-3">The Philippines' national dish featuring chicken braised in vinegar, soy sauce, and garlic.</p>
-            <div class="flex justify-between items-center">
-              <div class="star-rating">
-                <input type="radio" id="5-stars-3" name="rating-3" value="5" />
-                <label for="5-stars-3">★</label>
-                <input type="radio" id="4-stars-3" name="rating-3" value="4" />
-                <label for="4-stars-3">★</label>
-                <input type="radio" id="3-stars-3" name="rating-3" value="3" />
-                <label for="3-stars-3">★</label>
-                <input type="radio" id="2-stars-3" name="rating-3" value="2" />
-                <label for="2-stars-3">★</label>
-                <input type="radio" id="1-star-3" name="rating-3" value="1" />
-                <label for="1-star-3">★</label>
-              </div>
-              <a href="recipe.php" class="text-red-600 hover:text-red-700 font-medium">View Recipe</a>
-            </div>
           </div>
-        </div>
+        <?php endif; ?>
 
       </div>
       <div class="text-center mt-8">
-        <a href="recipes.php" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700">View All Recipes</a>
+        <a href="categories.php" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700">View All Recipes</a>
       </div>
     </div>
   </section>
-
-  <!-- Call to Action -->
-
 
   <!-- Footer -->
   <footer class="bg-gray-800 text-white py-12">
@@ -249,15 +218,15 @@ $isLoggedIn = isUserLoggedIn();
         <div>
           <h3 class="font-bold text-lg mb-4">Explore</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-white">Recipes</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white">Categories</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white">Collections</a></li>
+            <li><a href="categories.php" class="text-gray-400 hover:text-white">Recipes</a></li>
+            <li><a href="categories.php" class="text-gray-400 hover:text-white">Categories</a></li>
+            <li><a href="Favorites.php" class="text-gray-400 hover:text-white">Favorites</a></li>
           </ul>
         </div>
         <div>
           <h3 class="font-bold text-lg mb-4">Company</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+            <li><a href="about.php" class="text-gray-400 hover:text-white">About Us</a></li>
             <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
             <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
             <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
@@ -281,6 +250,53 @@ $isLoggedIn = isUserLoggedIn();
   <script>
     AOS.init();
     feather.replace();
+
+    // Toggle favorite function
+    function toggleFavorite(element) {
+      const dishID = element.getAttribute('data-dish-id');
+      
+      fetch('../backend/favorites_handler.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=toggle&dishID=${encodeURIComponent(dishID)}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          if (data.isFavorite) {
+            element.classList.remove('heart-outline');
+            element.classList.add('heart-filled');
+            showToast('Added to favorites!');
+          } else {
+            element.classList.remove('heart-filled');
+            element.classList.add('heart-outline');
+            showToast('Removed from favorites!');
+          }
+          feather.replace();
+        } else {
+          showToast(data.message || 'Failed to update favorite');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred. Please try again.');
+      });
+    }
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
   </script>
 </body>
 
