@@ -29,7 +29,7 @@ if ($isLoggedIn) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pinoys Cravings - Filipino Cookbook</title>
+  <title>Pinoys Cravings - Main Dish</title>
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -86,10 +86,13 @@ if ($isLoggedIn) {
         <i data-feather="book" class="mr-3 text-red-600"></i>
         Main Dishes
       </h1>
-      <a class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 flex items-center" href="categories.php">
-        <i data-feather="arrow-left" class="mr-2"></i>
-        Back
-      </a>
+      <div class="flex gap-3">
+        
+        <a class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 flex items-center" href="categories.php">
+          <i data-feather="arrow-left" class="mr-2"></i>
+          Back
+        </a>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 drop-shadow-md">
@@ -101,9 +104,7 @@ if ($isLoggedIn) {
           $delay = ($cardIndex * 100) % 400;
           $cardIndex++;
 
-          $isFavorited = in_array($row['dishID'], $userFavorites);  // ← ADD THIS
-
-
+          $isFavorited = in_array($row['dishID'], $userFavorites);
         ?>
 
           <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
@@ -127,17 +128,17 @@ if ($isLoggedIn) {
                 </h3>
 
                 <div class="flex items-center">
-    <?php if ($isLoggedIn): ?>
-        <i data-feather="heart" 
-           class="w-5 h-5 cursor-pointer transition-colors favorite-heart <?= $isFavorited ? 'heart-filled' : 'heart-outline' ?>"
-           data-dish-id="<?= htmlspecialchars($row['dishID']) ?>"
-           onclick="toggleFavorite(this)"></i>
-    <?php else: ?>
-        <i data-feather="heart" 
-           class="w-5 h-5 cursor-pointer transition-colors heart-outline"
-           onclick="alert('Please login to add favorites'); window.location.href='login.php'"></i>
-    <?php endif; ?>
-</div>
+                  <?php if ($isLoggedIn): ?>
+                    <i data-feather="heart" 
+                       class="w-5 h-5 cursor-pointer transition-colors favorite-heart <?= $isFavorited ? 'heart-filled' : 'heart-outline' ?>"
+                       data-dish-id="<?= htmlspecialchars($row['dishID']) ?>"
+                       onclick="toggleFavorite(this)"></i>
+                  <?php else: ?>
+                    <i data-feather="heart" 
+                       class="w-5 h-5 cursor-pointer transition-colors heart-outline"
+                       onclick="alert('Please login to add favorites'); window.location.href='login.php'"></i>
+                  <?php endif; ?>
+                </div>
               </div>
 
               <p class="text-gray-600 mb-3 text-sm line-clamp-2">
@@ -284,10 +285,10 @@ if ($isLoggedIn) {
       will-change: auto;
     }
 
-    /* ADD THESE: */
+    /* Heart icon styles */
     .heart-filled {
       fill: #E63946;
-      stroke: #E63946;
+      stroke: #f78992ff;
     }
 
     .heart-outline {

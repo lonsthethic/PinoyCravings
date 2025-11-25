@@ -16,7 +16,7 @@ $isLoggedIn = isUserLoggedIn();
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script src="https://unpkg.com/feather-icons"></script>
-  <title>Document</title>
+  <title>Pinoy-Cravings Categories</title>
 </head>
 
 <body>
@@ -51,7 +51,15 @@ $isLoggedIn = isUserLoggedIn();
     <h1 class="text-3xl font-bold text-gray-800 flex items-center">
       <i data-feather="bookmark" class="mr-3 text-red-600"></i>
       Your Collections
+            
     </h1>
+    <div class="flex gap-3">
+      <?php if ($isLoggedIn): ?>
+          <a class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300 flex items-center" href="add_dish.php">
+            <i data-feather="plus" class="mr-2"></i>
+            Add New Dish
+          </a>
+        <?php endif; ?> </div>
   </div>
 
 
